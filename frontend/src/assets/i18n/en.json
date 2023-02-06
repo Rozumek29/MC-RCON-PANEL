@@ -1,0 +1,9 @@
+{
+  "dashboard": "dashboard",
+  "users": "users",
+  "settings": "settings",
+  "logout": "logout",
+  "password": "password",
+  "sign_in": "sign in",
+  "lets_sign_in": "let's sign in"
+}

@@ -81,16 +81,16 @@ router.post('/refreshToken', (req, res) => {
 
 router.post('/logout', (req, res) => {
     if (!req.body.token) {
-        return res.status(400).json({code: 400, message: "Bad request"});
+        return res.status(400).json({message: "Bad request"});
     }
-    const {token} = req.body;
+    const token = req.body.token;
     if (!refreshTokens.includes(token)) {
-        return res.status(403).json({code: 403, message: "Forbidden"});
+        return res.status(403).json({message: "Forbidden"});
     }
     refreshTokens.find((item, index) => {
         item === token ? refreshTokens.splice(index, 1) : null;
     });
-    res.status(200);
+    res.status(200).json({message: "Logged out"});
 });
 
 module.exports = router;

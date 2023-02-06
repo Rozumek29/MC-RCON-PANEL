@@ -9,7 +9,8 @@ import {Router} from "@angular/router";
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient, private cookieService: CookieService, private router:Router) {}
+  constructor(private http: HttpClient, private cookieService: CookieService, private router: Router) {
+  }
 
   login(email: string, password: string) {
     return this.http.post('http://localhost:5000/auth/login', {email: email, password: password}).pipe(
@@ -30,8 +31,8 @@ export class AuthService {
   }
 
   refreshToken(refreshToken: string) {
-    return this.http.post(`${environment.API_URL}`, {token: refreshToken}).pipe(
-      tap((response:any) => {
+    return this.http.post(`${environment.API_URL}/auth/refreshToken`, {token: refreshToken}).pipe(
+      tap((response: any) => {
         this.cookieService.set('token', response.token);
         this.cookieService.set('ref_token', response.refreshToken);
       }, (error) => {
@@ -43,11 +44,17 @@ export class AuthService {
   }
 
   logout() {
-    return this.http.post(`${environment.API_URL}/auth/logout`, {token: this.cookieService.get('token'), refreshToken: this.cookieService.get('ref_token')}).pipe(
+    return this.http.post(`${environment.API_URL}/auth/logout`, {token: this.cookieService.get('ref_token')}).pipe(
       tap(() => {
         this.cookieService.delete('token');
         this.cookieService.delete('ref_token');
-      })
+        this.router.navigate(['/login']);
+        }, () => {
+        this.cookieService.delete('token');
+        this.cookieService.delete('ref_token');
+        this.router.navigate(['/login']);
+        }
+      )
     );
   }
 }

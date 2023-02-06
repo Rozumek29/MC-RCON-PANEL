@@ -3,20 +3,27 @@ import {AuthService} from "../services/authService";
 import {FormControl, FormGroup, NgForm, Validators} from "@angular/forms";
 import {tap} from "rxjs";
 import {Router} from "@angular/router";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   errorMessage: string;
   formModel: Partial<any>;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private cookieService: CookieService) {
     this.errorMessage = "";
     this.formModel = {email: "", password: ""};
+  }
+
+  ngOnInit() {
+    if (this.cookieService.get('token')) {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   login() {
@@ -30,7 +37,7 @@ export class LoginComponent {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.errorMessage = err.error.message;
+        this.errorMessage = err.error.message ? err.error.message : "Internal server error"
         console.log(err)
       }
     });
